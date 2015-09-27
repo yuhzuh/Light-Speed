@@ -22,5 +22,6 @@ Requirements:
 1. Move /Assets and /ProjectSettings into a new folder named what you want for the project.
 2. Open Unity and choose OPEN OTHER.
 3. Select the folder you just created.
+4. Configure for Android by choosing Android under File > Build Settings, then Switch Platform.
 
 Notes: The main game scene, titled main1.unity, is located within /Assets/etc.
