@@ -3,6 +3,9 @@ Fly a ship through space avoiding asteroids.
 Last long enough and enter light speed,
 then dodge some more stuff until you can't anymore.
 
+Check out the game in Google Play Store at  
+https://play.google.com/store/apps/details?id=com.yuhang.lightspeed&hl=en
+
 ## Credits
 Developed in C# Unity3d.  
 Developed by Yuhang Zhang.  
