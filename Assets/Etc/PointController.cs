@@ -24,7 +24,8 @@ public class PointController : MonoBehaviour
 	Vector2 startpos;
 	Vector2 movepos;
 	float /*xDist,*/ yDist, yMax, yMin;
-
+	
+	// Event states for point movement
 	enum pointState
 	{
 		Stall,
@@ -64,24 +65,26 @@ public class PointController : MonoBehaviour
 		endpos = new Vector2 (campos.x, yMin - 0.25f);
 		startpos = new Vector2 (campos.x, yMax + 0.25f);
 
-		/*/ Set length of line
+		/*/Set length of line
 		cur.SetPosition (0, new Vector3 (xDist, 0, 0));
 		cur.SetPosition (1, new Vector3 (-xDist, 0, 0));*/
 
-		/*/ Set Collider size
+		/* Set Collider size
 		curcol.size = new Vector2 (xDist * 2, 0.2f);*/
 
 		// Main camera height and width
 		camheight = Camera.main.orthographicSize * 2;
 		camwidth = camheight * Camera.main.aspect;
 		
+		// Line sprite components
 		tempsr = transform.GetChild (2).GetComponent<SpriteRenderer> ();
 		temps = tempsr.sprite;
 		
-		// How big bg1 is in world units
+		// How big line is in world units
 		unitWidth = temps.textureRect.width / temps.pixelsPerUnit;
 		unitHeight = temps.textureRect.height / temps.pixelsPerUnit;
 		
+		// Adjust line scale
 		transform.localScale = new Vector3 (camwidth / (unitWidth * 4f), camheight / (unitHeight * 70));
 
 		// Set position above camera
@@ -134,9 +137,11 @@ public class PointController : MonoBehaviour
 		movepos.y -= 5f * Time.deltaTime;
 		transform.position = movepos;
 	}
+	
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
+		// Point gained after collision with ship object
 		if (other.gameObject.tag == "Ship" && !inside && mainstate.curState != GameController.gameState.End) {
 			curpoints++;
 			//Debug.Log (curpoints);

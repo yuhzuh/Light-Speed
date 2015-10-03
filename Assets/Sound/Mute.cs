@@ -15,21 +15,27 @@ public class Mute : MonoBehaviour
 
 	// Use this for initialization
 	void Start ()
-	{
+	{	
+		// Audio component
 		bgm = Audio.mainbgm.GetComponent<AudioSource> ();
+		
+		// Check if a mute gameobject exists, if so delete this gameobject
 		if (mutecur == null) {
 			DontDestroyOnLoad (gameObject); //this gameobject will persist from scene to scene
 			mutecur = this;
 		} else if (mutecur != this) {
 			Destroy (gameObject);
 		}
-
+		
+		// UI button components
 		mute = GetComponent<Button> ();
+		// Add listener to button
 		mute.onClick.AddListener (() => {
 			VolControl ();});
-
+		// Retrieve past mute info from persistent data
 		muted = StatsManager.stats.muted;
-
+		
+		// Initial button text according to previous game data
 		text = mute.GetComponentInChildren<Text> ();
 		if (muted == 1) {
 			text.text = "UNMUTE";
@@ -38,18 +44,13 @@ public class Mute : MonoBehaviour
 			text.text = "MUTE";
 			bgm.volume = 0.7f;
 		}
-
+		// Disallow multiple clicks until sound fully fades in or out
 		clicked = false;
 	}
 	
-	// Update is called once per frame
-	void Update ()
-	{
-	
-	}
-
 	public void VolControl ()
 	{
+		// If button is unmuted, fade vol out to mute, vice versa
 		if (muted == 0 && clicked == false) {
 			StartCoroutine (fadeOut ());
 			text.text = "UNMUTE";
@@ -65,6 +66,7 @@ public class Mute : MonoBehaviour
 		StatsManager.stats.Save ();
 	}
 
+	// Volume fade out
 	IEnumerator fadeOut ()
 	{
 		newvol = bgm.volume;
@@ -76,7 +78,8 @@ public class Mute : MonoBehaviour
 		clicked = false;
 		yield break;
 	}
-
+	
+	// Volume fade in
 	IEnumerator fadeIn ()
 	{
 		newvol = bgm.volume;

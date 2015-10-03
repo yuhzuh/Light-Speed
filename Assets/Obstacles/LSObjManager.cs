@@ -13,34 +13,35 @@ public class LSObjManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		// Camera details
 		main = Camera.main;
 		xMax = main.aspect * main.orthographicSize + main.transform.position.x;
 		xMin = -xMax;
 		yMax = main.transform.position.y + main.orthographicSize;
 		yMin = main.transform.position.y - main.orthographicSize;
-
+		
+		// Current active LSObj gameobjects
 		curObjCount = 0;
+		
+		// Initial bullet move speed
 		speed = 0.1f;
 
 		StartCoroutine (makeLSObj ());
 		StartCoroutine (SpeedUp ());
 	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-	
-	}
 
+	// Create new LSobj objects until cap is reach, during Light speed game state
 	IEnumerator makeLSObj ()
 	{
 		while (GameController.maingame.curState != GameController.gameState.Lightspeed) {
 			yield return null;
 		}
+		// Delay, wait for LSBG to appear
 		if (GameController.maingame.curState == GameController.gameState.Lightspeed) {
 			yield return new WaitForSeconds (5f);
 		}
 		while (GameController.maingame.curState == GameController.gameState.Lightspeed) {
+			// Max of 8 LSobj gameobjects
 			if (curObjCount < 8) {
 				lsobj = (GameObject)Instantiate (lsobj, Vector2.zero, Quaternion.identity);
 				lsobj.transform.SetParent (transform, true);
@@ -54,7 +55,8 @@ public class LSObjManager : MonoBehaviour
 			yield return null;
 		}
 	}
-
+	
+	// Continuously speed up bullet move speed
 	IEnumerator SpeedUp ()
 	{
 		while (GameController.maingame.curState != GameController.gameState.Lightspeed) {
@@ -63,6 +65,7 @@ public class LSObjManager : MonoBehaviour
 		if (GameController.maingame.curState == GameController.gameState.Lightspeed) {
 			yield return new WaitForSeconds (5f);
 		}
+		// Max speed ~0.7
 		while (GameController.maingame.curState == GameController.gameState.Lightspeed) {
 			while (speed < 0.7) {
 				yield return new WaitForSeconds (10f); 

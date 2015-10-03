@@ -69,15 +69,10 @@ public class AsteroidMovement : MonoBehaviour
 		curRig.velocity = speed;
 		curRig.AddTorque (turnspeed);
 	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-
-	}
 
 	void OnBecameInvisible ()
 	{
+		// Move asteroid to start at random x position when invisible
 		if (!invis) {
 			if (mainstate.curState == GameController.gameState.Lightspeed) {
 				Destroy (gameObject);
@@ -90,12 +85,14 @@ public class AsteroidMovement : MonoBehaviour
 
 	void OnCollisionEnter2D (Collision2D other)
 	{
+		// Behaviour when asteroids collide with eachother
 		if (other.gameObject.tag == "Asteroid" && !incol) {
 			colvec = curRig.velocity.normalized;
 			curRig.velocity = (colvec + speed) * 1.05f;
 			curRig.AddTorque (-turnspeed * 2f);
 			incol = true;
 		}
+		// Gamestate = End when asteroid collides with ship
 		if (other.gameObject.tag == "Ship" && mainstate.curState != GameController.gameState.End) {
 			mainstate.curState = GameController.gameState.End;
 			//Debug.Log (mainstate.curState);
@@ -104,11 +101,13 @@ public class AsteroidMovement : MonoBehaviour
 
 	void OnCollisionExit2D (Collision2D other)
 	{
+		// incol used to prevent multiple collisions
 		if (other.gameObject.tag == "Asteroid" && incol) {
 			incol = false;
 		}
 	}
 
+	// Determine new position for asteroid
 	IEnumerator newPos ()
 	{
 		yield return new WaitForSeconds (Random.Range (0f, 2f));
@@ -117,19 +116,20 @@ public class AsteroidMovement : MonoBehaviour
 		targetpos.y = main.orthographicSize + 0.3f;
 		transform.position = targetpos;
 		                                
-		// Asteroid Details
+		// Asteroid Details, random speed, random size
 		randomscale = Random.Range (7, 12);
 		speed.x = 0;
 		speed.y = Random.Range (curasteroidstate.speedmin, curasteroidstate.speedmax);
 		turnspeed = Random.Range (-4, 4);
 		                                
-		// Scale ship according to camera size
+		// Randomly scale asteroid
 		transform.localScale = new Vector3 (camwidth / (unitWidth * randomscale), camwidth / (unitWidth * randomscale));
 		                                
 		//Asteroid Initial speeds
 		curRig.velocity = speed;
 		curRig.AddTorque (turnspeed);
-
+		
+		// asteriod comes into view again
 		invis = false;
 
 		yield break;

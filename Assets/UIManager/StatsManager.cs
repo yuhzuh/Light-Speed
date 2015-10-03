@@ -8,20 +8,22 @@ using System.IO;
 public class StatsManager : MonoBehaviour
 {
 	public static StatsManager stats;
-
+	
+	// Variables to be saved persistently
 	public int highscore;
 	public int gamesplayed;
 	public int muted;
 
 	void Awake ()
 	{
+		// Don't destroy object on load
 		if (stats == null) {
 			DontDestroyOnLoad (gameObject); //this gameobject will persist from scene to scene
 			stats = this;
 		} else if (stats != this) {
 			Destroy (gameObject);
 		}
-		Load (); //Muted didn't work until i put it here
+		Load (); //Muted didn't work until I put it here, needs to load variables before Mute object initiates for retrieval of said variables
 	}
 
 	// Use this for initialization
@@ -30,10 +32,7 @@ public class StatsManager : MonoBehaviour
 		//Load ();
 	}
 
-	void Update ()
-	{
-	}
-
+	// Save data into persistentDataPath
 	public void Save ()
 	{
 		BinaryFormatter bf = new BinaryFormatter ();
@@ -48,6 +47,7 @@ public class StatsManager : MonoBehaviour
 		file.Close ();
 	}
 
+	// Load previous variables from exiting dat file, else create a new data file
 	void Load ()
 	{
 		if (File.Exists (Application.persistentDataPath + "lightSpeedStat.dat")) {
@@ -66,7 +66,8 @@ public class StatsManager : MonoBehaviour
 			muted = 0;
 		}
 	}
-
+	
+	// Clear console
 	public void ClearConsole ()
 	{
 		var logEntries = System.Type.GetType ("UnityEditorInternal.LogEntries,UnityEditor.dll");

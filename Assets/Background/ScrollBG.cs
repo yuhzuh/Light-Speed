@@ -19,12 +19,9 @@ public class ScrollBG : MonoBehaviour
 	float end;
 	// Store sprite renderer component
 	SpriteRenderer bgsr;
-
+	
+	// Reference to active ScaleBG object
 	ScaleBG par;
-
-	void Awake ()
-	{
-	}
 
 	// Use this for initialization
 	void Start ()

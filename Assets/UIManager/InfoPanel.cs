@@ -19,11 +19,7 @@ public class InfoPanel : MonoBehaviour
 
 	}
 	
-	// Update is called once per frame
-	void Update ()
-	{
-	}
-
+	// Disable player when info panel opens
 	void StartPanel ()
 	{
 		infopanel.SetActive (true);

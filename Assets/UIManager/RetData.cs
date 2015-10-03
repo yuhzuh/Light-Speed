@@ -13,7 +13,8 @@ public class RetData : MonoBehaviour
 		gamesplayed = transform.GetChild (1).GetComponent<Text> ();
 
 	}
-
+	
+	// Score board data
 	void Update ()
 	{
 		// Both stats are updated in GameController

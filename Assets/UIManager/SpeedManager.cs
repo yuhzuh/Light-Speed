@@ -4,7 +4,9 @@ using System.Collections;
 
 public class SpeedManager : MonoBehaviour
 {
+	// Current active MovementController object
 	MovementController curmctrl;
+	// Current active LSObjManager Object
 	public LSObjManager curls;
 	float speed;
 
@@ -18,15 +20,11 @@ public class SpeedManager : MonoBehaviour
 	{
 		curmctrl = GameObject.FindGameObjectWithTag ("Player").GetComponent<MovementController> ();
 		curslider = GetComponent<Slider> ();
+		
+		// Retrieve speed from MovementController
 		speed = curmctrl.speed;
 
 		StartCoroutine (Ongoing ());
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-
 	}
 
 	IEnumerator Ongoing ()
@@ -34,12 +32,14 @@ public class SpeedManager : MonoBehaviour
 		while (GameController.maingame.curState != GameController.gameState.Ongoing) {
 			yield return null;
 		}
+		// Continuously update slider value according to MovementController speed, 
 		while (GameController.maingame.curState == GameController.gameState.Ongoing) {
 			speed = curmctrl.speed;
 			curslider.value = speed;
 			yield return null;
 		}
 		yield return new WaitForSeconds (5f);
+		// When gamestate enters Lightspeed, start ColorFadeLS
 		StartCoroutine (ColorFadeLS ());
 		yield break;
 	}
@@ -60,14 +60,16 @@ public class SpeedManager : MonoBehaviour
 
 		speed = curls.speed;
 		float f = 0;
-
+		
+		// Slider value decreases along with slider color change
 		for (float i = 0.5f; i > 0.1f || f < 0.5f; i -= 0.005f) {
 			curslider.value = i;
 			Fill.color = Color.Lerp (fillog, newfill, f / 0.5f);
 			f += 0.005f;
 			yield return null;
 		}
-
+		
+		// Set slider value to LSObjManager speed
 		while (GameController.maingame.curState == GameController.gameState.Lightspeed) {
 			curslider.value = curls.speed;
 			yield return null;

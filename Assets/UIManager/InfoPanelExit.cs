@@ -22,12 +22,14 @@ public class InfoPanelExit : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		// Exit info panel on back button press
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			player.SetActive (true);
 			infopanel.SetActive (false);
 		}
 	}
 
+	// Re enable player gameobject
 	void ExitPanel ()
 	{
 		player.SetActive (true);

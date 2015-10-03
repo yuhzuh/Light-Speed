@@ -3,14 +3,16 @@ using System.Collections;
 
 public class LSObjMovement : MonoBehaviour
 {
+	// bullet object components
 	Transform bullet;
 	SpriteRenderer bulletsr;
-	//bullet movement
+	// bullet movement
 	int bpos;
 	Vector2 bcur;
 
 	LineRenderer lr;
-
+	
+	// Active LSObjManager object
 	LSObjManager par;
 	float xMax, xMin, yMax, yMin;
 
@@ -19,14 +21,18 @@ public class LSObjMovement : MonoBehaviour
 	Vector2 cur;
 	Vector2 direction;
 
+	// Line and bullet start/end positions
 	int startpos;
 	int endpos;
 
+	// Non-alpha color and alpha ver of that color
 	Color curcolor;
 	Color clearcolor;
 	//************************
 
+	// Bullet move speed
 	float speed;
+	// LineRenderer fade out speed
 	float linespeed;
 
 	// Use this for initialization
@@ -35,24 +41,28 @@ public class LSObjMovement : MonoBehaviour
 		par = GetComponentInParent<LSObjManager> ();
 		bullet = GetComponentInChildren<Transform> ();
 		bulletsr = GetComponentInChildren<SpriteRenderer> ();
-
+		
+		// Scale Bullet based on screen size
 		float unitWidth = bulletsr.sprite.textureRect.width / bulletsr.sprite.pixelsPerUnit;
 		float camwidth = Camera.main.aspect * 2 * Camera.main.orthographicSize;
 		bullet.transform.localScale = new Vector3 (camwidth / (unitWidth * 2f), camwidth / (unitWidth * 2f));
 
 		lr = GetComponent<LineRenderer> ();
+		// Make objects visible by setting it to upper layer
 		lr.sortingLayerName = "Obstacles";
-
+		// Line renderer details
 		lr.SetWidth (0.05f, 0.05f);
 
 		clearcolor = Color.white;
 		clearcolor.a = 0;
-
+		
+		// Retrieve camera dimensions from parent
 		xMax = par.xMax;
 		xMin = par.xMin;
 		yMax = par.yMax;
 		yMin = par.yMin;
 
+		// Initial line fade speed
 		linespeed = 0.15f;
 
 		StartCoroutine (newPos ());
@@ -64,13 +74,15 @@ public class LSObjMovement : MonoBehaviour
 	{
 		speed = par.speed;
 	}
-
+	
+	// New position for LSObj after bullet leaves screen
 	IEnumerator newPos ()
 	{
 		while (GameController.maingame.curState != GameController.gameState.Lightspeed) {
 			yield return null;
 		}
 		while (GameController.maingame.curState == GameController.gameState.Lightspeed) {
+			// 3 different position states for lsobj to appear, chosen randomly
 			startpos = Random.Range (0, 2);
 
 			// specific target for 3 left, middle, right
@@ -111,7 +123,8 @@ public class LSObjMovement : MonoBehaviour
 					end.y = Random.Range (yMin, yMax);
 				}
 			}
-
+	
+			// 
 			lr.SetColors (Color.white, Color.white);
 
 			direction = (end - start).normalized;
@@ -122,12 +135,14 @@ public class LSObjMovement : MonoBehaviour
 			// bullet info
 			bullet.position = start;
 			bcur = start;
-
+			
+			// Set start position for lsobj
 			lr.SetPosition (0, start);
-
+			
+			// Movement from start to end for linerenderer
 			if (start.y > end.y) {
 
-				//bullet pos
+				//bullet pos that was chosen earlier
 				bpos = 0;
 
 				while (cur.y > end.y) {
@@ -165,10 +180,10 @@ public class LSObjMovement : MonoBehaviour
 					}
 				}
 			}
-
+			
 			curcolor = Color.white;
 			curcolor.a = 1;
-
+			// Color fade in/out
 			while (curcolor.a > 0) {
 				lr.SetColors (curcolor, Color.white);
 				curcolor.a -= 0.05f;
@@ -213,16 +228,19 @@ public class LSObjMovement : MonoBehaviour
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
+		// Gamestate changes to end when bullet touches ship object
 		if (other.gameObject.tag == "Ship" && GameController.maingame.curState != GameController.gameState.End) {
 			GameController.maingame.curState = GameController.gameState.End;
 		}
 	}
-
+	
+	// Speed up line fade out speed
 	IEnumerator linespeedUp ()
 	{
 		while (GameController.maingame.curState != GameController.gameState.Lightspeed) {
 			yield return null;
 		}
+		// Speed only increases during Lightspeed gamestate
 		if (GameController.maingame.curState == GameController.gameState.Lightspeed) {
 			yield return new WaitForSeconds (10f);
 			while (linespeed < 0.7f) {

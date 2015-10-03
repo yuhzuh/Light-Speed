@@ -8,7 +8,8 @@ public class RestartGame : MonoBehaviour
 
 	// Stop double clicks
 	bool clicked;
-
+	
+	// End canvas canvasgroup component
 	CanvasGroup endSpecific;
 
 	// Use this for initialization
@@ -23,12 +24,7 @@ public class RestartGame : MonoBehaviour
 		endSpecific = GameController.maingame.endcanvas.transform.GetChild (0).transform.GetChild (0).GetComponent<CanvasGroup> ();
 	}
 	
-	// Update is called once per frame
-	void Update ()
-	{
-
-	}
-
+	// Restart button
 	public void restart ()
 	{
 		if (!clicked) {
@@ -36,7 +32,8 @@ public class RestartGame : MonoBehaviour
 			clicked = true;
 		}
 	}
-
+	
+	// Fade out canvas then reload game
 	IEnumerator fadeEnd ()
 	{
 		StartCoroutine (GameController.maingame.FadeOut (GameController.maingame.scorecanvas, 0.05f));
@@ -50,7 +47,8 @@ public class RestartGame : MonoBehaviour
 
 		yield break;
 	}
-
+	
+	// Canvasgroup fadeout
 	IEnumerator fadeOutSpec (CanvasGroup other)
 	{
 		other.alpha = 1;

@@ -6,19 +6,23 @@ public class GameController : MonoBehaviour
 	public static GameController maingame;
 
 	public PointController pointcon;
-
+	
+	// All UI canvas gameobjects
 	public GameObject infopanel;
 	public Canvas ongoingcanvas;
 	public Canvas endcanvas;
 	public Canvas scorecanvas;
 	public Canvas startcanvas;
+	// Canvas groups for further alteration
 	CanvasGroup ongoingcg;
 	CanvasGroup endcg;
 	public CanvasGroup scorecg; //Public cause needed to be reference in replay
-
+	
+	// Different speeds for fades
 	float speed1 = 0.05f;
 	float speed2 = 0.02f;
-
+	
+	// Game states
 	public enum gameState
 	{
 		Start,
@@ -28,10 +32,10 @@ public class GameController : MonoBehaviour
 		Molten
 	}
 	;
-
+	
+	// Current game state
 	public gameState curState;
-
-
+	
 	void Awake ()
 	{
 		curState = gameState.Start;
@@ -43,7 +47,8 @@ public class GameController : MonoBehaviour
 	{
 		//Max 60 fps
 		//Application.targetFrameRate = 30;
-
+		
+		// Only set start canvas to true
 		ongoingcanvas.enabled = false;
 		endcanvas.enabled = false;
 		startcanvas.enabled = true;
@@ -55,18 +60,21 @@ public class GameController : MonoBehaviour
 
 
 		StartCoroutine (UIManager ());
-
+		
+		// Clear console
 		Debug.ClearDeveloperConsole ();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
+		// Quit application on back button if info screen is not active
 		if (Input.GetKeyDown (KeyCode.Escape) && !infopanel.activeInHierarchy) {
 			Application.Quit ();
 		} 
 	}
-
+	
+	// Enable/disable UI canvas gameobjects based on gamestate
 	IEnumerator UIManager ()
 	{
 		while (curState == gameState.Start) {

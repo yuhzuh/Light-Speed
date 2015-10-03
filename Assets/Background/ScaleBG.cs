@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class ScaleBG : MonoBehaviour
-{
+{	
+	// Reference to main game state
 	GameController mainstate;
 
 	// Store the background prefabs
@@ -12,11 +13,14 @@ public class ScaleBG : MonoBehaviour
 
 	//Store planets
 	public GameObject planet1, planet2;
+
+	//Planet move speed and spin speed
 	float planetspeed = 0.005f;
 	float spinspeed = 0.05f;
 
 	// Store lightspeed prefab
 	public GameObject lsbg;
+	// Store lightspeed components
 	SpriteRenderer lsSprite;
 	ParticleSystem lspart;
 
@@ -44,10 +48,13 @@ public class ScaleBG : MonoBehaviour
 	// The difference between camend and spriteend;
 	float offset;
 
-	// Referenced in ScrollBG script
+	// Referenced in ScrollBG script 
+	// Length of bg1
 	public float spritelen;
+	// Scroll speed of backgrounds
 	public float scrollspd;
-
+	
+	// Store bg2 position
 	Vector2 bg2pos;
 
 	void Awake ()
@@ -61,6 +68,7 @@ public class ScaleBG : MonoBehaviour
 		camheight = main.orthographicSize * 2;
 		camwidth = camheight * main.aspect;
 		
+		// bg1 sprite components
 		bg1sprite = bg1.GetComponent<SpriteRenderer> ();
 		bg1spritetemp = bg1sprite.sprite;
 		
@@ -124,24 +132,20 @@ public class ScaleBG : MonoBehaviour
 		mainstate = GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ();
 
 		// Initial scroll speed
-		scrollspd = 0.3f;//0.3f;
+		scrollspd = 0.3f;
 		// Change speed as game progresses
 		StartCoroutine (changespd ());
 		StartCoroutine (lightspd ());
 		StartCoroutine (MovePlanet ());
 
 	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-	}
 
 	IEnumerator changespd ()
-	{
+	{	
 		while (mainstate.curState == GameController.gameState.Start) {
 			yield return null;
 		}
+		//Start increasing speed
 		while (mainstate.curState == GameController.gameState.Ongoing) {
 			//Debug.Log ("scrollspd: " + scrollspd);
 			yield return new WaitForSeconds (5f);
@@ -180,7 +184,8 @@ public class ScaleBG : MonoBehaviour
 		//Position LSBG
 		lsbg.transform.position = position;
 		lsbg.transform.parent = transform;
-
+		
+		// Disable particle emission until gamestate reaches lightspeed
 		lspart = lsbg.transform.GetChild (0).GetComponent<ParticleSystem> ();
 		lspart.enableEmission = false;
 
@@ -189,37 +194,44 @@ public class ScaleBG : MonoBehaviour
 		}
 		if (mainstate.curState == GameController.gameState.Lightspeed) {
 
-			lspart.enableEmission = true;	//Start bg particles
+			lspart.enableEmission = true;	//Start LSBG particles
 
 			while (scrollspd < 50) {
 				Color tmp = lspart.startColor;
 				scrollspd += 0.2f;
+				// Fade in LSBG
 				if (scrollspd > 40) {
 					lsOrigColor.a += 0.007f;
 					lsSprite.color = lsOrigColor;
 				}
+				// LSPart increase in tail
 				if (lspart.startSpeed < 2) {
 					lspart.startSpeed += 0.01f;
 				}
+				// Fade into deeper blue color
 				if (lspart.startColor.r < 1) {
 					tmp.r += 0.006f;
 					lspart.startColor = tmp;
 				}
 				yield return null;
 			}
-
+			
+			// Finish LSBG fade in
 			while (lsSprite.color.a < 1) {
 				lsOrigColor.a += 0.007f;
 				lsSprite.color = lsOrigColor;
 				yield return null;
 			}
+			// Stall bg1, bg2
 			scrollspd = 0;
 		}
+		// Stall until further stages
 		while (mainstate.curState == GameController.gameState.Lightspeed) {
 			yield return null;
 		}
 	}
 
+	// Coroutine for moving planets
 	IEnumerator MovePlanet ()
 	{
 		while (mainstate.curState == GameController.gameState.Start) {
@@ -228,7 +240,8 @@ public class ScaleBG : MonoBehaviour
 
 		Vector2 movement;
 		Vector3 spin = new Vector3 (0, 0, spinspeed);
-
+		
+		// Move planet1 until off screen
 		while (planet1.transform.position.y > yMinPlanet) {
 			movement = planet1.transform.position;
 			movement.y -= planetspeed;
@@ -236,6 +249,7 @@ public class ScaleBG : MonoBehaviour
 			planet1.transform.position = movement;
 			yield return null;
 		}
+		// Start moving planet2 until off screen
 		while (planet2.transform.position.y > yMinPlanet) {
 			movement = planet2.transform.position;
 			movement.y -= planetspeed;
